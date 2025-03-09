@@ -25,7 +25,22 @@ describe('Game Controller', () => {
         title: "Test Game",
         date: "2025-03-10",
         location: "Test Location",
-        teams: ["Team A", "Team B"],
+        teams: [
+            {
+                color: 'white',
+                players: [
+                    { name: 'Player 1', capsNumber: 1 },
+                    { name: 'Player 2', capsNumber: 2 }
+                ]
+            },
+            {
+                color: 'blue',
+                players: [
+                    { name: 'Player 3', capsNumber: 1 },
+                    { name: 'Player 4', capsNumber: 2 }
+                ]
+            }
+        ],
         notes: "Test notes"
     };
 
@@ -44,6 +59,48 @@ describe('Game Controller', () => {
             const response = await request(app)
                 .post('/api/games')
                 .send({});
+
+            expect(response.status).toBe(400);
+            expect(response.body.error).toBe('Validation Error');
+        });
+
+        it('should validate player cap numbers', async () => {
+            const invalidGame = {
+                ...testGame,
+                teams: [
+                    {
+                        color: 'white',
+                        players: [{ name: 'Invalid Player', capsNumber: 16 }]
+                    },
+                    {
+                        color: 'blue',
+                        players: []
+                    }
+                ]
+            };
+
+            const response = await request(app)
+                .post('/api/games')
+                .send(invalidGame);
+
+            expect(response.status).toBe(400);
+            expect(response.body.error).toBe('Validation Error');
+        });
+
+        it('should validate team colors', async () => {
+            const invalidGame = {
+                ...testGame,
+                teams: [
+                    {
+                        color: 'red',
+                        players: []
+                    }
+                ]
+            };
+
+            const response = await request(app)
+                .post('/api/games')
+                .send(invalidGame);
 
             expect(response.status).toBe(400);
             expect(response.body.error).toBe('Validation Error');
@@ -95,6 +152,29 @@ describe('Game Controller', () => {
             
             expect(response.status).toBe(200);
             expect(response.body.title).toBe("Updated Game");
+        });
+
+        it('should update players in a team', async () => {
+            const createResponse = await request(app)
+                .post('/api/games')
+                .send(testGame);
+            
+            const updatedPlayers = [
+                { name: 'New Player', capsNumber: 5 }
+            ];
+
+            const response = await request(app)
+                .put(`/api/games/${createResponse.body._id}`)
+                .send({
+                    teams: [
+                        { color: 'white', players: updatedPlayers },
+                        { color: 'blue', players: [] }
+                    ]
+                });
+            
+            expect(response.status).toBe(200);
+            expect(response.body.teams[0].players).toHaveLength(1);
+            expect(response.body.teams[0].players[0].name).toBe('New Player');
         });
     });
 

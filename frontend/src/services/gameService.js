@@ -2,7 +2,7 @@ const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 export const createGame = async (gameData) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/games`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/games`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -10,11 +10,16 @@ export const createGame = async (gameData) => {
             body: JSON.stringify(gameData)
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-            throw new Error('Failed to create game');
+            throw {
+                status: response.status,
+                ...data
+            };
         }
 
-        return await response.json();
+        return data;
     } catch (error) {
         throw error;
     }

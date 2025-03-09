@@ -1,0 +1,64 @@
+.teams-section {
+    display: flex;
+    gap: 2rem;
+    margin: 1rem 0;
+}
+
+.team-section {
+    flex: 1;
+    max-width: 400px;
+}
+
+.player-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.player-row input[type="number"] {
+    width: 70px;
+}
+
+.error-messages {
+    background-color: #ffebee;
+    border: 1px solid #ffcdd2;
+    border-radius: 4px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.error-message {
+    color: #c62828;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.error-message:last-child {
+    margin-bottom: 0;
+}
+
+input.error {
+    border-color: #d32f2f;
+    background-color: #fff8f8;
+}
+
+.player-input {
+    position: relative;
+    flex: 1;
+}
+
+.validation-error {
+    color: #d32f2f;
+    font-size: 0.875rem;
+    background-color: #fff3f3;
+    border: 1px solid #ffcdd2;
+    border-radius: 4px;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
