@@ -1,30 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 const PlayerForm = ({ color, players, onPlayerChange, errors }) => {
-    const [validationError, setValidationError] = useState('');
+    const [capWarning, setCapWarning] = useState('');
+    const [reorderingPlayer, setReorderingPlayer] = useState(null);
+    const inputRefs = useRef({});
 
-    const validateUniqueCaps = (updatedPlayers, currentIndex, newCapsNumber) => {
+    const checkDuplicateCaps = (updatedPlayers, currentIndex, newCapsNumber) => {
         const capsNumber = parseInt(newCapsNumber, 10);
-        if (isNaN(capsNumber)) return true;
+        if (isNaN(capsNumber)) return false;
         
-        return !updatedPlayers.some((player, index) => 
+        return updatedPlayers.some((player, index) => 
             index !== currentIndex && 
             player.capsNumber === capsNumber
         );
     };
 
     const handleChange = (index, field, value) => {
-        if (field === 'capsNumber' && !validateUniqueCaps(players, index, value)) {
-            setValidationError(`Cap number ${value} is already in use in this team`);
-            return;
-        }
-        
-        setValidationError(''); // Clear error when input is valid
         const updatedPlayers = [...players];
         updatedPlayers[index] = {
             ...updatedPlayers[index],
             [field]: field === 'capsNumber' ? parseInt(value, 10) : value
         };
+
+        if (field === 'capsNumber') {
+            if (checkDuplicateCaps(updatedPlayers, index, value)) {
+                setCapWarning(`Warning: Cap number ${value} is already in use in this team`);
+            } else {
+                setCapWarning('');
+            }
+
+            // Store the current player before sorting
+            const player = updatedPlayers[index];
+            setReorderingPlayer(player);
+
+            // Sort players
+            updatedPlayers.sort((a, b) => {
+                const capA = a.capsNumber || 999;
+                const capB = b.capsNumber || 999;
+                return capA - capB;
+            });
+
+            // Find new index of the player after sorting
+            const newIndex = updatedPlayers.findIndex(p => p === player);
+            
+            // Schedule focus restoration after reordering
+            setTimeout(() => {
+                inputRefs.current[`${field}-${newIndex}`]?.focus();
+                setReorderingPlayer(null);
+            }, 300); // Match transition duration
+        }
+        
         onPlayerChange(color, updatedPlayers);
     };
 
@@ -35,37 +60,43 @@ const PlayerForm = ({ color, players, onPlayerChange, errors }) => {
     };
 
     return (
-        <div className="team-section">
-            <h3>{color === 'white' ? 'White Team' : 'Blue Team'}</h3>
-            {validationError && (
-                <div className="validation-error">{validationError}</div>
+        <div className="team-section" data-team={color}>
+            {capWarning && (
+                <div className="cap-warning">{capWarning}</div>
             )}
-            {players.map((player, index) => (
-                <div key={index} className="player-row">
-                    <div className="player-input">
-                        <input
-                            type="text"
-                            placeholder="Player Name"
-                            value={player.name || ''}
-                            onChange={(e) => handleChange(index, 'name', e.target.value)}
-                            className={errors?.validation?.includes('Player name is required') ? 'error' : ''}
-                        />
+            <div className="player-list">
+                {players.map((player, index) => (
+                    <div 
+                        key={player.capsNumber || index}
+                        className={`player-row ${player === reorderingPlayer ? 'reordering' : ''}`}
+                    >
+                        <div className="player-input">
+                            <input
+                                ref={el => inputRefs.current[`name-${index}`] = el}
+                                type="text"
+                                placeholder="Player Name"
+                                value={player.name || ''}
+                                onChange={(e) => handleChange(index, 'name', e.target.value)}
+                                className={errors?.validation?.includes('Player name is required') ? 'error' : ''}
+                            />
+                        </div>
+                        <div className="player-input">
+                            <input
+                                ref={el => inputRefs.current[`capsNumber-${index}`] = el}
+                                type="number"
+                                min="1"
+                                max="15"
+                                placeholder="Cap #"
+                                value={player.capsNumber || ''}
+                                onChange={(e) => handleChange(index, 'capsNumber', e.target.value)}
+                                className={errors?.validation?.some(err => 
+                                    err.includes('cap') || err.includes('Duplicate')
+                                ) ? 'error' : ''}
+                            />
+                        </div>
                     </div>
-                    <div className="player-input">
-                        <input
-                            type="number"
-                            min="1"
-                            max="15"
-                            placeholder="Cap #"
-                            value={player.capsNumber || ''}
-                            onChange={(e) => handleChange(index, 'capsNumber', e.target.value)}
-                            className={errors?.validation?.some(err => 
-                                err.includes('cap') || err.includes('Duplicate')
-                            ) ? 'error' : ''}
-                        />
-                    </div>
-                </div>
-            ))}
+                ))}
+            </div>
             {players.length < 15 && (
                 <button type="button" onClick={addPlayer}>
                     Add Player

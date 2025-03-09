@@ -43,12 +43,12 @@ const gameSchema = new mongoose.Schema({
     },
     date: {
         type: Date,
-        required: [true, 'Game date is required']
+        required: [true, 'Game date and time is required']
     },
     location: {
         type: String,
-        required: [true, 'Game location is required'],
-        trim: true
+        trim: true,
+        default: ''  // Make location optional with empty default
     },
     teams: [teamSchema],
     notes: {

@@ -3,17 +3,63 @@ import { createGame } from '../../services/gameService';
 import PlayerForm from './PlayerForm';
 import './Planning.css';
 
+const getTodayDateTime = () => {
+    const now = new Date();
+    // Format: YYYY-MM-DDThh:mm
+    return new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 16);
+};
+
+const getNextHourDateTime = () => {
+    const now = new Date();
+    // Round up to next hour
+    now.setHours(now.getHours() + 1);
+    now.setMinutes(0);
+    now.setSeconds(0);
+    now.setMilliseconds(0);
+    
+    // Format as YYYY-MM-DDThh:mm
+    return new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 16);
+};
+
 const Planning = () => {
-    const [gameData, setGameData] = useState({
-        title: '',
-        date: '',
-        location: '',
-        teams: [
-            { color: 'white', name: '', players: [] },
-            { color: 'blue', name: '', players: [] }
-        ],
-        notes: ''
-    });
+    const getTodayDate = () => {
+        return new Date().toISOString().split('T')[0];
+    };
+
+    const generateGameTitle = (teams) => {
+        return `${teams[0].name} vs. ${teams[1].name}`;
+    };
+
+    const getInitialState = () => {
+        const createDefaultPlayers = () => Array.from({ length: 5 }, (_, i) => ({
+            name: 'Player ' + (i + 1),
+            capsNumber: i + 1
+        }));
+
+        const teams = [
+            { color: 'white', name: 'White', players: createDefaultPlayers() },
+            { color: 'blue', name: 'Blue', players: createDefaultPlayers() }
+        ];
+
+        return {
+            title: generateGameTitle(teams),
+            date: getNextHourDateTime(),
+            location: '',
+            teams: teams,
+            notes: ''
+        };
+    };
+
+    const [gameData, setGameData] = useState(getInitialState());
+
+    const resetForm = () => {
+        setGameData(getInitialState());
+    };
+
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
@@ -27,17 +73,7 @@ const Planning = () => {
         try {
             const response = await createGame(gameData);
             setSuccessMessage(`Game created successfully! Game ID: ${response._id}`);
-            // Clear form after successful submission
-            setGameData({
-                title: '',
-                date: '',
-                location: '',
-                teams: [
-                    { color: 'white', name: '', players: [] },
-                    { color: 'blue', name: '', players: [] }
-                ],
-                notes: ''
-            });
+            resetForm();
         } catch (error) {
             console.error('API Error:', error); // For debugging
             
@@ -65,12 +101,18 @@ const Planning = () => {
     };
 
     const handleTeamNameChange = (color, name) => {
-        setGameData(prev => ({
-            ...prev,
-            teams: prev.teams.map(team => 
+        const updatedGameData = {
+            ...gameData,
+            teams: gameData.teams.map(team => 
                 team.color === color ? { ...team, name } : team
             )
-        }));
+        };
+        
+        // Update both team name and title
+        setGameData({
+            ...updatedGameData,
+            title: generateGameTitle(updatedGameData.teams)
+        });
     };
 
     return (
@@ -101,15 +143,17 @@ const Planning = () => {
                     placeholder="Game Title"
                     value={gameData.title}
                     onChange={(e) => setGameData({...gameData, title: e.target.value})}
+                    disabled
+                    className="game-title-input"
                 />
                 <input
-                    type="date"
+                    type="datetime-local"
                     value={gameData.date}
                     onChange={(e) => setGameData({...gameData, date: e.target.value})}
                 />
                 <input
                     type="text"
-                    placeholder="Location"
+                    placeholder="Location (optional)"  // Updated placeholder
                     value={gameData.location}
                     onChange={(e) => setGameData({...gameData, location: e.target.value})}
                 />

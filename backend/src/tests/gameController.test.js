@@ -45,6 +45,24 @@ describe('Game Controller', () => {
     };
 
     describe('POST /api/games', () => {
+        it('should create game without location', async () => {
+            const gameWithoutLocation = {
+                title: "Test Game",
+                date: "2025-03-10",
+                teams: [
+                    { color: 'white', name: 'White', players: [] },
+                    { color: 'blue', name: 'Blue', players: [] }
+                ]
+            };
+
+            const response = await request(app)
+                .post('/api/games')
+                .send(gameWithoutLocation);
+
+            expect(response.status).toBe(201);
+            expect(response.body.location).toBe('');
+        });
+
         it('should create a new game', async () => {
             const response = await request(app)
                 .post('/api/games')
@@ -104,6 +122,48 @@ describe('Game Controller', () => {
 
             expect(response.status).toBe(400);
             expect(response.body.error).toBe('Validation Error');
+        });
+
+        it('should create game with date and time', async () => {
+            const gameData = {
+                title: "Test Game",
+                date: "2025-03-09T14:30",
+                teams: [
+                    { color: 'white', name: 'White', players: [] },
+                    { color: 'blue', name: 'Blue', players: [] }
+                ]
+            };
+
+            const response = await request(app)
+                .post('/api/games')
+                .send(gameData);
+
+            expect(response.status).toBe(201);
+            expect(new Date(response.body.date)).toEqual(new Date(gameData.date));
+        });
+
+        it('should handle game creation with next hour date', async () => {
+            const nextHour = new Date();
+            nextHour.setHours(nextHour.getHours() + 1);
+            nextHour.setMinutes(0);
+            nextHour.setSeconds(0);
+            nextHour.setMilliseconds(0);
+
+            const gameData = {
+                title: "Test Game",
+                date: nextHour.toISOString(),
+                teams: [
+                    { color: 'white', name: 'White', players: [] },
+                    { color: 'blue', name: 'Blue', players: [] }
+                ]
+            };
+
+            const response = await request(app)
+                .post('/api/games')
+                .send(gameData);
+
+            expect(response.status).toBe(201);
+            expect(new Date(response.body.date)).toEqual(nextHour);
         });
     });
 

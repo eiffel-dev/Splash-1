@@ -1,22 +1,80 @@
+/* Base container with tighter spacing */
+.planning {
+    max-width: 1800px;
+    width: 98%;
+    margin: 0 auto;
+    padding: 0.75rem;
+    box-sizing: border-box;
+}
+
+/* Teams section with reduced spacing */
 .teams-section {
     display: flex;
-    gap: 2rem;
-    margin: 1rem 0;
+    gap: 1rem;
+    margin: 0.5rem 0;
+    flex-wrap: wrap;
+    justify-content: space-between;  /* Helps with wide screens */
+    width: 100%;
 }
 
 .team-section {
     flex: 1;
-    max-width: 400px;
+    min-width: 45%; /* Percentage-based minimum width */
+    padding: 1rem; /* Reduced padding */
+    border: 1px solid #eee;
+    border-radius: 4px;
+    box-sizing: border-box;
 }
 
-.player-row {
+.team-name-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.player-list {
     display: flex;
+    flex-direction: column;
     gap: 0.5rem;
     margin-bottom: 1rem;
 }
 
+/* Player rows with minimal spacing */
+.player-row {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.25rem;
+    margin-bottom: 0.25rem;
+    transition: all 0.3s ease;
+    background: transparent;
+    position: relative;
+}
+
+.player-row.reordering {
+    background: rgba(255, 255, 255, 0.05);
+    transform: scale(1.02);
+}
+
 .player-row input[type="number"] {
-    width: 70px;
+    width: 60px;
+    min-width: 60px;
+}
+
+button[type="button"] {
+    padding: 6px 12px;
+    background-color: #e0e0e0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9375rem;
+    align-self: flex-start;
+}
+
+button[type="button"]:hover {
+    background-color: #d5d5d5;
 }
 
 .error-messages {
@@ -49,16 +107,288 @@ input.error {
 
 .validation-error {
     color: #d32f2f;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     background-color: #fff3f3;
     border: 1px solid #ffcdd2;
     border-radius: 4px;
-    padding: 0.5rem;
-    margin: 0.5rem 0;
+    padding: 0.25rem 0.5rem;
+    margin: 0.25rem 0;
     animation: fadeIn 0.3s ease-in;
 }
 
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* Form elements */
+.planning form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: none; /* Remove any max-width constraints */
+}
+
+/* Input fields with reduced padding */
+.planning input[type="text"],
+.planning input[type="date"],
+.planning textarea {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9375rem;
+}
+
+.planning input[type="datetime-local"] {
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9375rem;
+    width: 200px; /* Fixed width for better layout */
+}
+
+.game-title-input:disabled {
+    background-color: #f5f5f5;
+    color: #333;
+    cursor: not-allowed;
+}
+
+.player-row input[type="text"] {
+    flex: 1;
+    min-width: 150px;
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+button[type="submit"] {
+    padding: 6px 12px;
+    background-color: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9375rem;
+    margin-top: 1rem;
+}
+
+button[type="submit"]:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.error-messages,
+.success-message {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 4px;
+}
+
+/* Compact header inputs */
+.header-inputs {
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+/* Compact team headers */
+.team-section h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+}
+
+/* Compact warning messages */
+.cap-warning,
+.validation-error {
+    padding: 0.25rem 0.5rem;
+    margin: 0.25rem 0;
+    font-size: 0.8125rem;
+}
+
+/* Media queries - consolidated and ordered from largest to smallest */
+@media (min-width: 1600px) {
+    .planning {
+        width: 95%;
+        max-width: 1800px;
+    }
+    
+    .teams-section {
+        gap: 3rem;
+    }
+    
+    .team-section {
+        padding: 2.5rem;
+    }
+}
+
+@media (max-width: 1400px) {
+    .planning {
+        width: 96%;
+    }
+    
+    .team-section {
+        min-width: 47%;
+    }
+}
+
+@media (max-width: 1200px) {
+    .planning {
+        width: 95%;
+    }
+    
+    .team-section {
+        min-width: 48%;
+    }
+}
+
+@media (max-width: 768px) {
+    .planning {
+        width: 100%;
+        padding: 0.5rem;
+    }
+
+    .teams-section {
+        flex-direction: column;
+    }
+    
+    .team-section {
+        margin-bottom: 1rem;
+        min-width: 100%;
+    }
+
+    .player-row {
+        flex-direction: row;
+    }
+
+    .player-row input[type="text"] {
+        min-width: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .planning input[type="text"],
+    .planning input[type="date"],
+    .planning textarea {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+
+    .team-section {
+        padding: 0.5rem;
+    }
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+    .planning input[type="datetime-local"] {
+        background-color: #333333;
+        border-color: #404040;
+        color: #e0e0e0;
+    }
+}
+
+/* Team-specific styling */
+.team-section[data-team="white"] {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+}
+
+.team-section[data-team="white"] h3 {
+    color: #212121;
+}
+
+.team-section[data-team="white"] .team-name-input,
+.team-section[data-team="white"] .player-row input {
+    background-color: #f8f8f8;
+    border: 1px solid #e0e0e0;
+    color: #000000;
+}
+
+.team-section[data-team="blue"] {
+    background-color: #1a237e;
+    border: 1px solid #283593;
+}
+
+.team-section[data-team="blue"] h3 {
+    color: #ffffff;
+}
+
+.team-section[data-team="blue"] .team-name-input,
+.team-section[data-team="blue"] .player-row input {
+    background-color: #3949ab;
+    border: 1px solid #5c6bc0;
+    color: #ffffff;
+}
+
+.team-section[data-team="blue"] input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Hover states for inputs */
+.team-section[data-team="white"] input:hover {
+    border-color: #bdbdbd;
+}
+
+.team-section[data-team="blue"] input:hover {
+    border-color: #90caf9;
+}
+
+/* Focus states */
+.team-section[data-team="white"] input:focus {
+    border-color: #9e9e9e;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(158, 158, 158, 0.1);
+}
+
+.team-section[data-team="blue"] input:focus {
+    border-color: #64b5f6;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+}
+
+/* Hover states */
+.team-section[data-team="white"] .team-name-input:hover,
+.team-section[data-team="white"] .player-row input:hover {
+    border-color: #bdbdbd;
+    background-color: #ffffff;
+}
+
+.team-section[data-team="blue"] .team-name-input:hover,
+.team-section[data-team="blue"] .player-row input:hover {
+    border-color: #7986cb;
+    background-color: #3f51b5;
+}
+
+/* Focus states */
+.team-section[data-team="white"] .team-name-input:focus,
+.team-section[data-team="white"] .player-row input:focus {
+    border-color: #9e9e9e;
+    background-color: #ffffff;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.team-section[data-team="blue"] .team-name-input:focus,
+.team-section[data-team="blue"] .player-row input:focus {
+    border-color: #9fa8da;
+    background-color: #5c6bc0;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+/* Number inputs specific styling */
+.team-section[data-team="blue"] input[type="number"] {
+    background-color: #3949ab;
+    color: #ffffff;
+}
+
+/* Fix Chrome number input spin buttons color for blue team */
+.team-section[data-team="blue"] input[type="number"]::-webkit-inner-spin-button,
+.team-section[data-team="blue"] input[type="number"]::-webkit-outer-spin-button {
+    filter: invert(1);
+    opacity: 0.7;
 }
