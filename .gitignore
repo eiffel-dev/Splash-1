@@ -16,3 +16,21 @@ node_modules/
 
 # Environment variables
 .env
+
+# Test coverage
+/backend/coverage
+/frontend/coverage
+/backend/.nyc_output
+/frontend/.nyc_output
+
+# Test reports
+/backend/test-report.xml
+/frontend/test-report.xml
+/backend/junit.xml
+/frontend/junit.xml
+
+# IDE specific files
+.vscode
+.idea
+*.swp
+*.swo
