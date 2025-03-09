@@ -3,10 +3,6 @@
   "version": "1.0.0",
   "description": "Backend for the Splash web application",
   "main": "src/app.js",
-  "scripts": {
-    "start": "node src/app.js",
-    "dev": "nodemon src/app.js"
-  },
   "dependencies": {
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
@@ -16,7 +12,17 @@
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.4"
+    "@types/dotenv": "^6.1.1",
+    "@types/jest": "^29.5.14",
+    "jest": "^29.7.0",
+    "mongodb-memory-server": "^10.1.4",
+    "nodemon": "^2.0.4",
+    "supertest": "^7.0.0"
+  },
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "jest --detectOpenHandles --forceExit"
   },
   "author": "Your Name",
   "license": "MIT",

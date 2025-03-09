@@ -11,14 +11,10 @@ router.get('/data', (req, res) => indexController.getData(req, res));
 
 // Game Planning Routes
 router.post('/games', (req, res) => gameController.createGame(req, res));
-
-router.get('/games', (req, res) => {
-  // TODO: Add game retrieval logic
-});
-
-router.get('/games/:id', (req, res) => {
-  // TODO: Add single game retrieval logic
-});
+router.get('/games', (req, res) => gameController.getGames(req, res));
+router.get('/games/:id', (req, res) => gameController.getGame(req, res));
+router.put('/games/:id', (req, res) => gameController.updateGame(req, res));
+router.delete('/games/:id', (req, res) => gameController.deleteGame(req, res));
 
 // Game Tracking Routes
 router.post('/games/:id/track', (req, res) => {
