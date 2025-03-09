@@ -11,4 +11,4 @@ class IndexController {
     // Additional methods for handling other API requests can be added here
 }
 
-export default IndexController;
+module.exports = IndexController;
